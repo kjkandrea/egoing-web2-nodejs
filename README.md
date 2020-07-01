@@ -207,3 +207,8 @@ const arr = [3, 6, 9, 1, 12]
 console.log(arr[0],' equal ',_.first(arr)) // 3  equal  3
 console.log(arr[arr.length - 1],' equal ',_.last(arr)) // 12  equal  12
 ```
+
+### 개념 정리
+
+* HTTP, OS와 같은 언어(여기에서는 Node.js)에서 제공하는 **내부 모듈**은 `require`를 통해 사용할 수 있다.
+* underscore와 같은 **외부 모듈**은 NPM을 통해 인스톨함으로써 나의 패키지에 종속성을 추가하여 `require`를 통해 사용할 수 있다.
