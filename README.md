@@ -212,3 +212,139 @@ console.log(arr[arr.length - 1],' equal ',_.last(arr)) // 12  equal  12
 
 * HTTP, OS와 같은 언어(여기에서는 Node.js)에서 제공하는 **내부 모듈**은 `require`를 통해 사용할 수 있다.
 * underscore와 같은 **외부 모듈**은 NPM을 통해 인스톨함으로써 나의 패키지에 종속성을 추가하여 `require`를 통해 사용할 수 있다.
+
+## 서버 생성하기
+
+서버를 생성하기 위해서는 http 모듈과 http 내부의 createServer 메서드를 사용한다. `server.js`를 생성하여 이를 이해해보자.
+
+``` javascript
+// server.js
+
+const http = require('http'); // 서버를 만드는 모듈 불러옴
+http.createServer((request, response) => { // 서버 만드는 메소드
+  console.log('server start!');
+}).listen(3000);
+```
+
+`node server.js` 명령어를 입력하면 listen에 입력된 포트번호로 서버가 열린다.
+
+### createServer : request, response 
+
+`createServer` 메소드 콜백의 매개변수인 `request`와 `response` 에 대해 이해하여야한다. 
+
+우선 HTTP를 공부하며 배운 정의를 다시한번 기억하자.
+
+* Request(요청) : ‘localhost 내의 3000번 포트’ 의 내용을 보여주세요.’
+* Response(응답) : ‘내용 데이터 여기 있습니다.’
+
+#### Request
+
+**request**는 곧 요청이다.
+
+서버를 실행하고 http://localhost:3000 로 접근한것 자체가 서버에 요청을 한 행위이다.
+서버는 대기하고 있다가 요청이 들어오면 그제서야 **요청(request)을 해석하여 응답(response)을 해주고자 동작 한다.**
+
+#### Response
+
+**response** 는 곧 응답이다.
+
+서버를 실행하고 http://localhost:3000 로 접근하여 브라우저에 아무것도 표시되지 않는 이유는 응답(response)을 설정하지 않았기 때문이다.
+
+#### 서버의 동작방식
+
+정리해보자면 서버의 동작방식은 다음과 같다.
+
+1. request 가 발생
+2. 서버에서 이를 처리
+3. response를 반환
+
+### request 를 처리하기
+
+createServer 메소드의 인자인 request를 사용하여 요청을 처리해보자.
+
+``` javascript
+const http = require('http'); // 서버를 만드는 모듈 불러옴
+http.createServer((request, response) => { // 서버 만드는 메소드
+  return request
+    .on('error', (err) => { // 요청에 에러가 있으면
+      console.error(err);
+    })
+    .on('data', (data) => { // 요청에 데이터가 있으면
+      console.log(data);
+    })
+    .on('end', () => { // 요청의 데이터가 모두 받아졌으면
+      console.log('요청을 처리하였습니다.')
+    });
+}).listen(3000);
+```
+
+구문을 하나하나 살펴보자
+
+`request.on('error', (err) => { console.error(err); })`
+
+=> 요청에는 에러가 있을 수 있다. 이러한 에러가 발생하였는데 처리를 해주지않는다면 **Node.js서버는 다운된다**
+
+`request.on('data', (data) => { // something })`
+
+=> request에 data가 있을 경우 처리하는 부분이다. 
+
+`request.on('end', () => { console.log('요청을 처리하였습니다.') });`
+
+=> 모든 요청을 처리하면 '요청을 처리하였습니다.' 를 볼 수 있다.
+
+우리는 '요청을 처리하였습니다'를 보게되었지만 브라우저는 아무것도 표시하지않고 계속 로딩됨을 확인할 수 있다.
+현재상태로는 서버가 아무런 응답(response)을 하지 않기 때문이다.
+
+### response 를 처리하기
+
+모든 요청이 처리되면 (`response.end`) 우린 이제 브라우저에 다음과 같이 응답을 전송할 수 있다.
+
+``` javascript
+const http = require('http'); // 서버를 만드는 모듈 불러옴
+http.createServer((request, response) => { // 서버 만드는 메소드
+  return request
+    .on('error', (err) => { // 요청에 에러가 있으면
+      console.error(err);
+    })
+    .on('data', (data) => { // 요청에 데이터가 있으면
+      console.log(data);
+    })
+    .on('end', () => { // 요청의 데이터가 모두 받아졌으면
+      response.on('error', (err) => { // 응답에 에러가 있으면
+        console.error(err);
+      });
+      response.statusCode = 200; // 성공 임을 200 응답 상태 코드를 통해 알려준다.
+      response.setHeader('Content-Type', 'text/plain'); // header를 설정한다.  
+      response.write('this is my first response.\n'); // body에 정보를 넣는다.
+      response.end('Hello, World!'); // 정보 탑재 후 브라우저로 전송
+    });
+}).listen(3000);
+```
+
+마찬가지로 구문을 하나하나 살펴보자.
+
+`response.on('error', (err) => { console.error(err); });`
+
+=> 응답에는 에러가 있을 수 있다. 이러한 에러가 발생하였는데 처리를 해주지않는다면 **Node.js서버는 다운된다**
+
+`response.statusCode = 200;` 
+
+=> 성공적으로 데이터를 전송했음을 응답 상태 코드를 통해 알려준다.
+
+`response.setHeader('Content-Type', 'text/plain');` 
+
+=> setHeader를 통해 응답이 평문 텍스트임을 알려준다.
+
+`response.write('this is my first response.\n');`
+
+=> 보낼 텍스트를 기입한다.
+
+`response.end('Hello, World!');`
+
+ => end 메소드는 write함과 동시에 response를 종료한다.
+
+### 응답을 보고 기뻐하자!
+
+서버를 실행하고 http://localhost:3000로 접속(**요청**)하면 다음 텍스트가 출력되었음 을(**응답**)을 볼 수 있다.
+
+> this is my first response. Hello, World!
