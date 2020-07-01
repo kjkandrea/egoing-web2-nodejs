@@ -116,6 +116,25 @@ http.createServer((request,response) => {
 [localhost:3000/?id=HTML](http://localhost:3000/?id=HTML) 주소로 요청 하면 `[Object: null prototype] { id: 'HTML' }` 이란 로그가 출력된다.
 id 키 값을 가진 객체가 리턴되는것을 볼 수 있다.
 
+## fs.readFile 로 파일 내용 읽어오기
+
+node.js로 특정 .txt 파일의 내용을 읽어오는 연습을 해보도록 하자.
+
+다음과 같은 파일을 작성하고 동일한 디렉토리에 sample.txt를 작성하였다.
+
+``` javascript
+// fileread.js
+
+const fs = require('fs');
+
+fs.readFile('./sample.txt', (err, data) => {
+  if (err) throw err;
+  console.log(data);
+});
+```
+
+`fileread.js`를 실행하면 파일의 내용이 로그에 표시된다.
+
 ## 모듈(Module)
 
 웹서버를 처음부터 만드는것은 굉장히 어려운 일이다. 이에 Nodejs는 **모듈** 이란 도구를 제공한다.
