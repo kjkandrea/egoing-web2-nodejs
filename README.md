@@ -58,3 +58,23 @@ app.listen(3000);
 node main.js
 ```
 
+## URL의 이해
+
+http://opentutorials.org:3000/main?id=HTML&page=12
+
+* **http** : **포로토콜(protocol)** 통신규칙. 사용자가 서버에 접속할 때 어떤 방식으로 통신할 것 인가? (ex : http, https, ftp)
+* **opentutorials.org** : **호스트 - 도메인(host - domain)** 특정한 인터넷에 연결되어있는 컴퓨터를 가르키는 구조
+* **3000** : **포트 번호(port)** 한대의 컴퓨터에는 여러 개의 서버가 있을 수 있음. 3000이란 3000번 포트에 연결되어있는 서버와 통신하겠다는 뜻
+* **main** : **패스(path)** 어떤 디렉토리의 어떤 파일인지를 가르킴
+* **?id=HTML?page=12** : **쿼리스트링(query string)** 
+
+### Query String
+
+쿼리스트링 이란? 웹서버에 어떠한 정보를 전달할때 사용하는 것
+
+`?id=HTML&page=12` : 
+내가 읽고 싶은 정보는 HTML이고(id=HTML) 12페이지(page=12) 이다.
+
+* 쿼리스트링의 시작은 물음표(?)
+* 값과 값 사이에는 amp(&)
+* 값과 값 사이는 equal(=)
