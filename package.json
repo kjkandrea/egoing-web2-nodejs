@@ -1,0 +1,23 @@
+{
+  "name": "egoing-web2-nodejs",
+  "version": "1.0.0",
+  "description": "Node.js 이해하기",
+  "main": "main.js",
+  "dependencies": {
+    "underscore": "^1.10.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kjkandrea/egoing-web2-nodejs.git"
+  },
+  "author": "andrea",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kjkandrea/egoing-web2-nodejs/issues"
+  },
+  "homepage": "https://github.com/kjkandrea/egoing-web2-nodejs#readme"
+}
