@@ -49,3 +49,12 @@ var app = http.createServer(function(request,response){
 });
 app.listen(3000);
 ```
+
+## 서버 실행
+
+루트 디렉토리에서 다음과 같은 커맨드를 입력한다.
+
+```
+node main.js
+```
+
