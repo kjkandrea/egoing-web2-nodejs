@@ -57,7 +57,7 @@ app.listen(3000);
 node main.js
 ```
 
-http://localhost:3000번으로 
+커맨드 입력 후 브라우저에서 http://localhost:3000 으로 접속하면 간단한 html 어플리케이션이 실행되는 것을 볼 수 있다.
 
 ## URL의 이해
 
