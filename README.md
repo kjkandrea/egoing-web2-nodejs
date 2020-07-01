@@ -80,6 +80,42 @@ http://opentutorials.org:3000/main?id=HTML&page=12
 * 값과 값 사이에는 amp(`&`)
 * 값과 값 사이는 equal(`=`)
 
+
+### url로 부터 쿼리스트링 파싱하기
+
+우선 url을 분석하기위해 다음과 같이 main.js 를 생성한 후 [localhost:3000/?id=HTML](http://localhost:3000/?id=HTML) 주소로 접근하여 보자.
+
+``` javascript
+const http = require('http');
+
+http.createServer((request,response) => {
+  const url = request.url; // url 정보
+  console.log(url)
+}).listen(3000);
+```
+
+`/?id=HTML` 이란 로그가 출력된다. 
+
+#### 모듈 사용 : url
+
+쿼리데이터를 파싱하기 위해 `const url = require('url');` 을 통해 모듈을 사용한다.
+
+그리고 코드를 다음 같이 변경 후 실행하여 보자.
+
+``` javascript
+const http = require('http');
+const url = require('url');
+
+http.createServer((request,response) => {
+  const _url = request.url;
+  const queryData = url.parse(_url, true).query;
+  console.log(queryData)
+}).listen(3000);
+```
+
+[localhost:3000/?id=HTML](http://localhost:3000/?id=HTML) 주소로 요청 하면 `[Object: null prototype] { id: 'HTML' }` 이란 로그가 출력된다.
+id 키 값을 가진 객체가 리턴되는것을 볼 수 있다.
+
 ## 모듈(Module)
 
 웹서버를 처음부터 만드는것은 굉장히 어려운 일이다. 이에 Nodejs는 **모듈** 이란 도구를 제공한다.
@@ -212,6 +248,7 @@ console.log(arr[arr.length - 1],' equal ',_.last(arr)) // 12  equal  12
 
 * HTTP, OS와 같은 언어(여기에서는 Node.js)에서 제공하는 **내부 모듈**은 `require`를 통해 사용할 수 있다.
 * underscore와 같은 **외부 모듈**은 NPM을 통해 인스톨함으로써 나의 패키지에 종속성을 추가하여 `require`를 통해 사용할 수 있다.
+
 
 ## 서버 생성하기
 
@@ -348,3 +385,47 @@ http.createServer((request, response) => { // 서버 만드는 메소드
 서버를 실행하고 http://localhost:3000로 접속(**요청**)하면 다음 텍스트가 출력되었음 을(**응답**)을 볼 수 있다.
 
 > this is my first response. Hello, World!
+
+
+## 서버로 HTML 전송하기
+
+다음과 같은 구조로 HTML과 server.js 를 준비하였다.
+
+```
+Root/
+--| server.js
+--| index.html
+--| 1.html
+--| 2.html
+--| 3.html
+```
+
+### 구성 모듈
+
+``` javascript
+// server.js
+
+const http = require('http');
+const fs = require('fs');
+
+http.createServer((request, response) => {
+  // do something
+}).listen(3000);
+```
+
+http에 이어 새로운 모듈 `fs`가 추가되었다. 각 모듈이 어떤 기능을 하는지 살펴보도록 하자.
+
+* `fs` : fs 모듈은 파일을 읽고 쓰는 모듈이다.
+
+### URL 파싱하기
+
+``` javascript
+http.createServer((request, response) => {
+  console.log(request.url)
+}).listen(3000);
+```
+
+다음과 같이 작성하고 http://localhost:3000/request-url 이란 url로 접속하면 `/request-url` 이란 로그가 찍히는걸 볼 수 있다.
+
+
+
