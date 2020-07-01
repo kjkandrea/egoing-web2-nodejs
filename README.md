@@ -81,22 +81,59 @@ http://opentutorials.org:3000/main?id=HTML&page=12
 * 값과 값 사이는 equal(`=`)
 
 
-### url로 부터 쿼리스트링 파싱하기
+`readdir.js`를 실행하면 실행한 디렉토리내의 파일 목록이 배열로 로그에 표시된다.
 
-우선 url을 분석하기위해 다음과 같이 main.js 를 생성한 후 [localhost:3000/?id=HTML](http://localhost:3000/?id=HTML) 주소로 접근하여 보자.
+
+## 모듈(Module)
+
+웹서버를 처음부터 만드는것은 굉장히 어려운 일이다. 이에 Nodejs는 **모듈** 이란 도구를 제공한다.
+`main.js`를 해석하며 Nodejs 모듈 개념에 대해 이해하여보자.
 
 ``` javascript
 const http = require('http');
+```
+
+require를 '필수적으로 요구되는 것'의 의미로 보면 위 코드는 다음의 의미를 지닌다. 
+
+> http를 필수적으로 요구하며 이 요구 사항의 이름을 http로 명명한다.
+
+모듈은 부품이다. 모듈이라는 부품을 사용하기 위해서는 require라는 함수로 호출한다.
+
+모듈을 활용하기 위해서 각 모듈의 [DOCS](https://nodejs.org/en/docs/) 를 참고하자.
+
+### 내부 모듈 OS 사용해보기
+
+[DOCS : API : OS](https://nodejs.org/docs/latest-v12.x/api/os.html)를 참고하여 OS정보를 보여주는 `module.js` 를 작성하여 보자.
+
+``` javascript
+// module.js
+
+const os = require('os');
+
+console.log(os.platform())
+```
+
+실행 커맨드를 입력해보자.
+
+```
+node module.js // // darwin
+```
+
+### 내부 모듈 활용
+
+#### url 파싱하기
+
+``` javascript
+const http = require('http');
+const url = require('url');
 
 http.createServer((request,response) => {
-  const url = request.url; // url 정보
-  console.log(url)
+  const urlObj = url.parse(_url, true)
+  console.log(urlObj)
 }).listen(3000);
 ```
 
-`/?id=HTML` 이란 로그가 출력된다. 
-
-#### 모듈 사용 : url
+#### url.parse로 쿼리데이터 파싱하기
 
 쿼리데이터를 파싱하기 위해 `const url = require('url');` 을 통해 모듈을 사용한다.
 
@@ -135,39 +172,19 @@ fs.readFile('./sample.txt', (err, data) => {
 
 `fileread.js`를 실행하면 파일의 내용이 로그에 표시된다.
 
-## 모듈(Module)
+#### fs.readdir 로 파일 목록 읽어오기
 
-웹서버를 처음부터 만드는것은 굉장히 어려운 일이다. 이에 Nodejs는 **모듈** 이란 도구를 제공한다.
-`main.js`를 해석하며 Nodejs 모듈 개념에 대해 이해하여보자.
-
-``` javascript
-const http = require('http');
-```
-
-require를 '필수적으로 요구되는 것'의 의미로 보면 위 코드는 다음의 의미를 지닌다. 
-
-> http를 필수적으로 요구하며 이 요구 사항의 이름을 http로 명명한다.
-
-모듈은 부품이다. 모듈이라는 부품을 사용하기 위해서는 require라는 함수로 호출한다.
-
-모듈을 활용하기 위해서 각 모듈의 [DOCS](https://nodejs.org/en/docs/) 를 참고하자.
-
-### 내부 모듈 OS 사용해보기
-
-[DOCS : API : OS](https://nodejs.org/docs/latest-v12.x/api/os.html)를 참고하여 OS정보를 보여주는 `module.js` 를 작성하여 보자.
+fs.readdir 을 이용하여 특정 디렉토리내의 파일 목록을 얻고 싶을때에 다음과 같이 할 수 있다.
 
 ``` javascript
-// module.js
+// readdir.js
 
-const os = require('os');
+const testFolder = './'
+const fs = require('fs');
 
-console.log(os.platform())
-```
-
-실행 커맨드를 입력해보자.
-
-```
-node module.js // // darwin
+fs.readdir(testFolder, (error, filelist) => {
+  console.log(filelist)
+})
 ```
 
 ## Node.js가 제공하지 않는 모듈을 사용해보자
@@ -404,47 +421,3 @@ http.createServer((request, response) => { // 서버 만드는 메소드
 서버를 실행하고 http://localhost:3000로 접속(**요청**)하면 다음 텍스트가 출력되었음 을(**응답**)을 볼 수 있다.
 
 > this is my first response. Hello, World!
-
-
-## 서버로 HTML 전송하기
-
-다음과 같은 구조로 HTML과 server.js 를 준비하였다.
-
-```
-Root/
---| server.js
---| index.html
---| 1.html
---| 2.html
---| 3.html
-```
-
-### 구성 모듈
-
-``` javascript
-// server.js
-
-const http = require('http');
-const fs = require('fs');
-
-http.createServer((request, response) => {
-  // do something
-}).listen(3000);
-```
-
-http에 이어 새로운 모듈 `fs`가 추가되었다. 각 모듈이 어떤 기능을 하는지 살펴보도록 하자.
-
-* `fs` : fs 모듈은 파일을 읽고 쓰는 모듈이다.
-
-### URL 파싱하기
-
-``` javascript
-http.createServer((request, response) => {
-  console.log(request.url)
-}).listen(3000);
-```
-
-다음과 같이 작성하고 http://localhost:3000/request-url 이란 url로 접속하면 `/request-url` 이란 로그가 찍히는걸 볼 수 있다.
-
-
-
