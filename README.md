@@ -280,10 +280,46 @@ console.log(arr[0],' equal ',_.first(arr)) // 3  equal  3
 console.log(arr[arr.length - 1],' equal ',_.last(arr)) // 12  equal  12
 ```
 
+### 모듈 만들기
+
+간단하게 모듈 만드는법을 살펴보겠다. 
+
+`mpart.js` 란 파일에서 모듈을 만들어 `muse.js` 에서 사용하여보겠다
+
+#### mpart.js
+
+이 파일에서는 객체를 하나 만들어 `module.exports`로 내보낼 것이다.
+
+``` javascript
+// mpart.js
+
+const M = {
+  v: 'v',
+  f: function() {
+    console.log(this.v)
+  }
+}
+
+module.exports = M;
+```
+
+#### muse.js
+
+이 파일에서 `mpart.js` 모듈을 다른 내장모듈이나 외장모듈을 사용하듯 모듈로 가져와 사용할 수 있다.
+
+``` javascript
+//muse.js
+
+const part = require('./mpart.js')
+
+part.f() // v
+```
+
 ### 개념 정리
 
 * HTTP, OS와 같은 언어(여기에서는 Node.js)에서 제공하는 **내부 모듈**은 `require`를 통해 사용할 수 있다.
 * underscore와 같은 **외부 모듈**은 NPM을 통해 인스톨함으로써 나의 패키지에 종속성을 추가하여 `require`를 통해 사용할 수 있다.
+* 모듈을 직접 만들어 사용할 수 있다.
 
 
 ## 서버 생성하기
