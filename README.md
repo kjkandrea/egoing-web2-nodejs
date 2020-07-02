@@ -528,3 +528,76 @@ pm2 start main.js --watch
 ```
 pm2 log
 ```
+
+## CRUD
+
+### Create - POST 방식으로 글 작성하기
+
+### Form 생성
+
+`/create` 란 경로를 하나 할당하여 제목, 내용을 받는 form을 create에 삽입하였다.
+
+``` javascript
+else if (pathname === '/create') {
+  fs.readdir(`${__dirname}/data`, (error, filelist) => {
+    title = 'WEB - create';
+    const list = template.List(filelist);
+    const form = `
+      <form action="http://localhost:3000/create_process" method="POST">
+        <p>
+          <input type="text" name="title" placeholder="title">
+        </p>
+        <p>
+          <textarea name="description" placeholder="description"></textarea>
+        </p>
+        <p>
+          <input type="submit">
+        </p>
+      </form>
+    `;
+    const output = template.HTML(title, list, `<h2>${title}</h2>${form}`);
+
+    response.writeHead(200);
+    response.end(output);
+  });
+}
+```
+
+create_process란 path로 요청(request)가 전송된다. 이 요청을 받아서 처리해주자.
+
+### create_process 받아서 표시해보기
+
+else-if 로 `create_process` 일 경우를 만든 후 해당 요청에서 들어온 쿼리를 분석해야 할 것이다. 이를 위해 쿼리스트링 모듈을 사용하기 위해 최상단에 모듈을 상수로 선언한다.
+
+``` javascript
+const qs = require('querystring')
+```
+
+그 후 쿼리를 해석하여 title과 description 데이터를 로그로 표시해보자.
+form에 title 부분에는 'this is title', description 부분에는 'this is description' 을 적어 제출했다.
+
+``` javascript
+else if ( pathname === '/create_process' ) {
+  let body = '';
+  request.on('data', (data) => {
+    body = body + data
+  });
+  request.on('end', () => {
+    const post = qs.parse(body);
+    const title = post.title;
+    const description = post.description;
+
+    console.log('title : ',title)
+    console.log('description : ',description)
+  });
+  response.writeHead(200);
+  response.end('success');
+}
+
+/*
+title : this is title
+description : this is description
+*/
+```
+
+form을 통해 받은 title과 description 정보를 얻는데에 성공하였다.
