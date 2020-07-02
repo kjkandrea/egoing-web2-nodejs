@@ -14,6 +14,7 @@ const template = {
       <body>
         <h1><a href="/">WEB</a></h1>
         ${list}
+        <a href="create">create</a>
         ${body}
       </body>
       </html>
@@ -37,7 +38,7 @@ http.createServer((request,response) => {
 
   //console.log(url.parse(_url, true))
   
-  if(pathname === '/'){
+  if (pathname === '/') {
     if(!queryData.id){
       fs.readdir(`${__dirname}/data`, (error, filelist) => {
         title = 'Welcome';
@@ -59,6 +60,28 @@ http.createServer((request,response) => {
         })
       })
     };
+  } else if (pathname === '/create') {
+    fs.readdir(`${__dirname}/data`, (error, filelist) => {
+      title = 'WEB - create';
+      const list = template.List(filelist);
+      const form = `
+        <form action="http://localhost:3000/create_process" method="post">
+          <p>
+            <input type="text" name="title" placeholder="title">
+          </p>
+          <p>
+            <textarea name="description" placeholder="description"></textarea>
+          </p>
+          <p>
+            <input type="submit">
+          </p>
+        </form>
+      `;
+      const output = template.HTML(title, list, `<h2>${title}</h2>${form}`);
+
+      response.writeHead(200);
+      response.end(output);
+    });
   } else {
     response.writeHead(404);
     response.end('Not Found');
