@@ -628,4 +628,6 @@ else if ( pathname === '/create_process' ) {
 
 또한 302 리다이렉션을 통해 자신이 적은 글로 이동시켜준다.
 
-### Update - 
+### Update 구현
+
+### Delete 구현
