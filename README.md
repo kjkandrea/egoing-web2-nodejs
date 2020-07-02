@@ -601,3 +601,29 @@ description : this is description
 ```
 
 form을 통해 받은 title과 description 정보를 얻는데에 성공하였다.
+
+### 파일 생성하기
+
+fs모듈에서 제공하는 `writeFile` 메서드를 이용하여 다음과 같이 파일이 생성되도록 처리하여보자.
+
+``` javascript
+else if ( pathname === '/create_process' ) {
+  let body = '';
+  request.on('data', (data) => {
+    body = body + data
+  });
+  request.on('end', () => {
+    const post = qs.parse(body);
+    const title = post.title;
+    const description = post.description;
+    fs.writeFile(`data/${title}`, description, 'utf-8', (error) => {
+      response.writeHead(302, {Location: `/?id=${title}`});
+      response.end('success');
+    })
+  });
+}
+```
+
+그후 폼을 submit 해 보면 data 디렉토리에 title에 적힌값을 파일명으로 하여 파일이 생성되는것을 볼 수 있다.
+
+또한 302 리다이렉션을 통해 자신이 적은 글로 이동시켜준다.
