@@ -627,3 +627,5 @@ else if ( pathname === '/create_process' ) {
 그후 폼을 submit 해 보면 data 디렉토리에 title에 적힌값을 파일명으로 하여 파일이 생성되는것을 볼 수 있다.
 
 또한 302 리다이렉션을 통해 자신이 적은 글로 이동시켜준다.
+
+### Update - 

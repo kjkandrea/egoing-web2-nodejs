@@ -4,7 +4,7 @@ const url = require('url');
 const qs = require('querystring')
 
 const template = {
-  HTML : function(title, list, body) {
+  HTML : function(title, list, body, control) {
     return `
       <!doctype html>
       <html>
@@ -15,7 +15,7 @@ const template = {
       <body>
         <h1><a href="/">WEB</a></h1>
         ${list}
-        <a href="create">create</a>
+        ${control}
         ${body}
       </body>
       </html>
@@ -45,7 +45,12 @@ http.createServer((request,response) => {
         title = 'Welcome';
         const description  = 'Hello, Node.js'
         const list = template.List(filelist);
-        const output = template.HTML(title, list, `<h2>${title}</h2>${description}`);
+        const output = template.HTML(
+          title,
+          list,
+          `<h2>${title}</h2>${description}`,
+          `<a href="create">create</a>`
+        );
 
         response.writeHead(200);
         response.end(output);
@@ -54,7 +59,15 @@ http.createServer((request,response) => {
       fs.readdir(`${__dirname}/data`, (error, filelist) => {
         fs.readFile(`data/${queryData.id}`, (error, description) => {
           const list = template.List(filelist);
-          const output = template.HTML(title, list, `<h2>${title}</h2>${description}`);
+          const output = template.HTML(
+            title,
+            list, 
+            `<h2>${title}</h2>${description}`,
+            `
+              <a href="create">create</a>
+              <a href="/update?id=${title}">update</a>
+            `
+          );
 
           response.writeHead(200);
           response.end(output);
@@ -66,7 +79,7 @@ http.createServer((request,response) => {
       title = 'WEB - create';
       const list = template.List(filelist);
       const form = `
-        <form action="http://localhost:3000/create_process" method="POST">
+        <form action="/create_process" method="POST">
           <p>
             <input type="text" name="title" placeholder="title">
           </p>
@@ -78,7 +91,12 @@ http.createServer((request,response) => {
           </p>
         </form>
       `;
-      const output = template.HTML(title, list, `<h2>${title}</h2>${form}`);
+      const output = template.HTML(
+        title,
+        list,
+        `<h2>${title}</h2>${form}`,
+        ''
+      );
 
       response.writeHead(200);
       response.end(output);
@@ -95,6 +113,54 @@ http.createServer((request,response) => {
       fs.writeFile(`data/${title}`, description, 'utf-8', (error) => {
         response.writeHead(302, {Location: `/?id=${title}`});
         response.end();
+      })
+    });
+  } else if ( pathname === '/update' ) {
+    fs.readdir(`${__dirname}/data`, (error, filelist) => {
+      fs.readFile(`data/${queryData.id}`, (error, description) => {
+        const list = template.List(filelist);
+        const output = template.HTML(
+          title,
+          list, 
+          `
+            <form action="/update_process" method="POST">
+              <input type="hidden" name="id" value="${title}">
+              <p>
+                <input type="text" name="title" placeholder="title" value="${title}">
+              </p>
+              <p>
+                <textarea name="description" placeholder="description">${description}</textarea>
+              </p>
+              <p>
+                <input type="submit">
+              </p>
+            </form>
+          `,
+          `
+            <a href="create">create</a>
+            <a href="/update?id=${title}">update</a>
+          `
+        );
+
+        response.writeHead(200);
+        response.end(output);
+      })
+    })
+  } else if ( pathname === '/update_process') {
+    let body = '';
+    request.on('data', (data) => {
+      body = body + data
+    });
+    request.on('end', () => {
+      const post = qs.parse(body);
+      const id = post.id;
+      const title = post.title;
+      const description = post.description;
+      fs.rename(`data/${id}`, `data/${title}`, (error) => {
+        fs.writeFile(`data/${title}`, description, 'utf-8', (error) => {
+          response.writeHead(302, {Location: `/?id=${title}`});
+          response.end();
+        })
       })
     });
   } else {
