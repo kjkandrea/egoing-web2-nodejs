@@ -421,3 +421,59 @@ http.createServer((request, response) => { // 서버 만드는 메소드
 서버를 실행하고 http://localhost:3000로 접속(**요청**)하면 다음 텍스트가 출력되었음 을(**응답**)을 볼 수 있다.
 
 > this is my first response. Hello, World!
+
+
+
+## 동기적 실행과 비동기적 실행
+
+노드는 대부분의 메소드를 비동기 방식으로 처리한다.
+특히 fs 모듈이 그러한 메소드를 많이 가지고 있다. 
+
+아래와 같이 syntax/sync.js 란 파일을 만들어 `readFileSync`, `readFile` 를 각각 실행해 보았다.
+
+`readFile`은 콜백을 사용한다.
+
+``` javascript
+// syntax/sync.js
+
+const fs = require('fs');
+
+// readFileSync
+
+console.group('readFileSync')
+console.log('A')
+const result = fs.readFileSync('./syntax/sample.txt', 'utf-8')
+console.log(result)
+console.log('C')
+console.groupEnd()
+
+
+// readFile
+
+console.group('readFile')
+console.log('A')
+fs.readFile('./syntax/sample.txt', 'utf-8', (error, result) => {
+  console.log(result)
+})
+console.log('C')
+
+/*
+readFileSync
+  A
+  B
+  C
+readFile
+  A
+  C
+  B
+*/
+``` 
+
+이를 통해 다음의 사실을 알 수 있다.
+
+* readFileSync는 파일을 읽어오는것을 기다렸다가 실행된다.
+* readFile은 파일이 읽어오는것을 기다리지 않고 다음 명령줄이 실행되며, 파일을 읽어온 후에 콜백을 실행한다.
+
+`readFileSync` 메소드를 사용하면 요청이 수백 개 이상 들어오게 된다면 성능이 문제가 생길것이다. `Sync` 메소드를 사용할 때는 이전 작업이 완료되어야 다음 작업을 진행할 수 있기때문에 처리를 기다리는동안 아무것도 못하고 있을 것이다.
+
+보통의 경우 비동기 방식이 효율적이며 비동기 메소드를 사용하는것이 바람직하다.
