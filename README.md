@@ -557,12 +557,26 @@ pm2 stop main.js
 pm2 start main.js --watch
 ```
 
+```
+pm2 start main.js --watch --no-daemon
+```
+
+```
+pm2 start main.js --watch --ignore-watch="data/*" --no-daemon
+```
+
 ### 로그 표시하기
 
 실행중인 프로세스의 로그를 표시한다.
 
 ```
 pm2 log
+```
+
+### 모든 프로세스 종료
+
+```
+pm2 kill
 ```
 
 ## CRUD
@@ -722,7 +736,7 @@ const sanitizeDescription = sanitizeHtml(description);
 ```
 
 **특정 태그 허용 할 수 있다.**
-
+ 
 ``` javascript
 const sanitizeDescription = sanitizeHtml(description, {
   allowedTags: ['h1']
