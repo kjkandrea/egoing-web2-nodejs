@@ -667,3 +667,31 @@ else if ( pathname === '/create_process' ) {
 ### Update 구현
 
 ### Delete 구현
+
+## 보안
+
+소스내에 경로 탐색에 관련된 `../`, `./`등 이 들어있는 경우 상위 경로로 접근하거나 할 수 없도록 `path` 모듈을 사용하여 `filter`를 만들어주자
+
+``` javascript
+const path = require('path');
+```
+### 입력정보에 대한 보안
+
+외부에서 정보가 들어오는 경우 (readFile 등) 다음과 같이 중간에 filter 상수를 생성해주어 다음과 같이 처리해주자
+
+#### Before
+
+queryData.id 부분에 `../password.js` 등 데이터를 받는다면 의도치않은 정보가 노출 될 수 있다.
+
+``` javascript
+fs.readFile(`data/${queryData.id}`, (error, description) => { ... }
+```
+
+#### After
+
+`filteredId`를 만들어 path를 외부에서 조작할 수 없도록 한다.
+
+``` javascript
+const filteredId = path.parse(queryData.id).base;
+fs.readFile(`data/${filteredId}`, (error, description) => { ... }
+```

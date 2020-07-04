@@ -3,6 +3,7 @@ const fs = require('fs');
 const url = require('url');
 const qs = require('querystring');
 const template = require('./lib/template');
+const path = require('path');
 
 http.createServer((request,response) => {
   const _url = request.url;
@@ -30,7 +31,8 @@ http.createServer((request,response) => {
       })
     } else {
       fs.readdir(`${__dirname}/data`, (error, filelist) => {
-        fs.readFile(`data/${queryData.id}`, (error, description) => {
+        const filteredId = path.parse(queryData.id).base;
+        fs.readFile(`data/${filteredId}`, (error, description) => {
           const list = template.list(filelist);
           const html = template.HTML(
             title,
@@ -94,7 +96,8 @@ http.createServer((request,response) => {
     });
   } else if ( pathname === '/update' ) {
     fs.readdir(`${__dirname}/data`, (error, filelist) => {
-      fs.readFile(`data/${queryData.id}`, (error, description) => {
+      const filteredId = path.parse(queryData.id).base;
+      fs.readFile(`data/${filteredId}`, (error, description) => {
         const list = template.list(filelist);
         const html = template.HTML(
           title,
@@ -148,7 +151,8 @@ http.createServer((request,response) => {
     request.on('end', () => {
       const post = qs.parse(body);
       const id = post.id;
-      fs.unlink(`data/${id}`, (error) => {
+      const filteredId = path.parse(id).base;
+      fs.unlink(`data/${filteredId}`, (error) => {
         response.writeHead(302, {Location: `/`});
           response.end();
       })
