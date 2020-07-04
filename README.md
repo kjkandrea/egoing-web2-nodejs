@@ -695,3 +695,36 @@ fs.readFile(`data/${queryData.id}`, (error, description) => { ... }
 const filteredId = path.parse(queryData.id).base;
 fs.readFile(`data/${filteredId}`, (error, description) => { ... }
 ```
+
+### 출력 정보에 대한 보안
+
+create시 본문에 javascript(`<script />`)를 삽입하여 악의적인 javascript 동작을 실행 시킬 수 있다.
+
+이를 위해 `<script />` 등의 코드가 포함되었을때 해당 코드가 실행되지않도록 html을 '소독' 하여야 한다.
+
+#### sanitize-html
+
+'소독'역할을 해주는 외부 모듈인 `sanitize-html`을 npm을 통해 설치해보자.
+
+https://www.npmjs.com/package/sanitize-html
+
+**설치 후 모듈 사용**
+
+``` javascript
+const sanitizeHtml = require('sanitize-html')
+```
+
+**소독할 상수를 다시 선언**
+
+``` javascript
+const sanitizeTitle = sanitizeHtml(title);
+const sanitizeDescription = sanitizeHtml(description);
+```
+
+**특정 태그 허용 할 수 있다.**
+
+``` javascript
+const sanitizeDescription = sanitizeHtml(description, {
+  allowedTags: ['h1']
+});
+```

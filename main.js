@@ -4,6 +4,7 @@ const url = require('url');
 const qs = require('querystring');
 const template = require('./lib/template');
 const path = require('path');
+const sanitizeHtml = require('sanitize-html')
 
 http.createServer((request,response) => {
   const _url = request.url;
@@ -17,12 +18,14 @@ http.createServer((request,response) => {
     if(!queryData.id){
       fs.readdir(`${__dirname}/data`, (error, filelist) => {
         title = 'Welcome';
+        const sanitizeTitle = sanitizeHtml(title);
         const description  = 'Hello, Node.js'
+        const sanitizeDescription = sanitizeHtml(description);
         const list = template.list(filelist);
         const html = template.HTML(
-          title,
+          sanitizeTitle,
           list,
-          `<h2>${title}</h2>${description}`,
+          `<h2>${sanitizeTitle}</h2>${sanitizeDescription}`,
           `<a href="create">create</a>`
         );
 
@@ -33,16 +36,20 @@ http.createServer((request,response) => {
       fs.readdir(`${__dirname}/data`, (error, filelist) => {
         const filteredId = path.parse(queryData.id).base;
         fs.readFile(`data/${filteredId}`, (error, description) => {
+          const sanitizeTitle = sanitizeHtml(title);
+          const sanitizeDescription = sanitizeHtml(description, {
+            allowedTags: ['h1']
+          });
           const list = template.list(filelist);
           const html = template.HTML(
-            title,
+            sanitizeTitle,
             list, 
-            `<h2>${title}</h2>${description}`,
+            `<h2>${sanitizeTitle}</h2>${sanitizeDescription}`,
             `
               <a href="/create">create</a>
-              <a href="/update?id=${title}">update</a>
+              <a href="/update?id=${sanitizeTitle}">update</a>
               <form action="delete_process" method="post" onsubmit="">
-                <input type="hidden" name="id" value="${title}">
+                <input type="hidden" name="id" value="${sanitizeTitle}">
                 <input type="submit" value="delete">
               </form>
             `
