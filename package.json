@@ -4,7 +4,7 @@
   "description": "Node.js 이해하기",
   "main": "main.js",
   "dependencies": {
-    "sanitize-html": "^1.27.0",
+    "sanitize-html": "^2.3.2",
     "underscore": "^1.10.2"
   },
   "devDependencies": {},
