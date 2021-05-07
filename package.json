@@ -5,7 +5,7 @@
   "main": "main.js",
   "dependencies": {
     "sanitize-html": "^1.27.0",
-    "underscore": "^1.10.2"
+    "underscore": "^1.12.1"
   },
   "devDependencies": {},
   "scripts": {
